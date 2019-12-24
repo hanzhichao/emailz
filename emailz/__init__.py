@@ -7,11 +7,11 @@ import logging
 
 class Email(object):
     def __init__(self):
-        self.user = os.getenv('SMTP_USER')
-        self.password = os.getenv('SMTP_PWD')
+        self.user = os.getenv('SMTP_USER', '')
+        self.password = os.getenv('SMTP_PWD', '')
         self.host = os.getenv('SMTP_HOST') or 'smtp.%s' % self.user.split('@')[-1]
-        self.port = os.getenv('SMTP_PORT')
-        self.ssl = os.getenv('SMTP_SSL')
+        self.port = os.getenv('SMTP_PORT', 25)
+        self.ssl = os.getenv('SMTP_SSL', False)
 
     def config(self, user, password, host=None, port=None, ssl=True):
         self.user = user
