@@ -1,6 +1,8 @@
 import os
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 from email.mime.multipart import MIMEMultipart
 import logging
 
@@ -60,14 +62,16 @@ class Email(object):
             if isinstance(attachments, str):
                 attachments = [attachments]
             for file_path in attachments:
+                file_name = os.path.basename(file_path)
+                att = MIMEBase('application', 'octet-stream')
+                att.add_header('Content-Disposition', 'attachment', filename=('utf-8', '', file_name))
                 if os.path.isfile(file_path):
                     try:
-                        att = MIMEText(open(file_path, 'rb').read(), 'base64', 'utf-8')
+                        att.set_payload(open(file_path, 'rb').read())
+                        encoders.encode_base64(att)
                     except Exception as ex:
                         logging.exception(ex)
                     else:
-                        att['Content-Type'] = 'application/octet-stream'
-                        att["Content-Disposition"] = f'attachment; filename={os.path.basename(file_path)}'
                         msg.attach(att)
 
         # handle receivers --------------------
