@@ -5,6 +5,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 from email.mime.multipart import MIMEMultipart
 import logging
+from threading import Thread
 
 
 class Email(object):
@@ -27,7 +28,16 @@ class Email(object):
         server.login(self.user, self.password)
         print('test success')
 
-    def send(self, subject, receivers, body=None, html=None, template=None, attachments=None):
+    def _send_email(self, receivers, msg):
+        try:
+            server = smtplib.SMTP_SSL(self.host, self.port) if self.ssl else smtplib.SMTP(self.host, self.port)
+            server.login(self.user, self.password)
+            server.sendmail(self.user, receivers, msg.as_string())
+            logging.info("Send email to %s done!" % ','.join(receivers))
+        except Exception as ex:
+            logging.exception(ex)
+
+    def send(self, subject, receivers, body=None, html=None, template=None, attachments=None, asy=True):
         if not all([self.host, self.user, self.password]):
             raise RuntimeError('Send no email for missing self.host,self.user or self.pwd')
 
@@ -81,13 +91,12 @@ class Email(object):
             else:
                 receivers = [receivers]
 
-        try:
-            server = smtplib.SMTP_SSL(self.host, self.port) if self.ssl else smtplib.SMTP(self.host, self.port)
-            server.login(self.user, self.password)
-            server.sendmail(self.user, receivers, msg.as_string())
-            logging.info("Send email to %s done!" % ','.join(receivers))
-        except Exception as ex:
-            logging.exception(ex)
+        # send email --------------------
+        if asy is True:
+            t = Thread(target=self._send_email, args=(receivers, msg))
+            t.start()
+        else:
+            self._send_email(receivers, msg)
 
 
 email = Email()
