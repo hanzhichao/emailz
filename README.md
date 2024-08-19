@@ -1,6 +1,11 @@
 # emailz
 
-easy use for send emails
+![Languate - Python](https://img.shields.io/badge/language-python-blue.svg)
+![PyPI - License](https://img.shields.io/pypi/l/emailz)
+![PyPI](https://img.shields.io/pypi/v/emailz)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/emailz)
+
+Email Easy: easy use for sending emails
 
 ## Install
 ```
@@ -12,12 +17,12 @@ pip install emailz
 from emailz import email
 
 email.config(user='ivan-me@163.com',password='***')
-email.send(subject='Test', body='hi,\n,it's a test',receivers=['han_zhichao@sina.cn'])
+email.send(subject='Test', body='hi,\n,it is a test',receivers=['han_zhichao@sina.cn'])
 ```
 
 ## Use HTML
 ```
-email.send(subject='Test', html='<h2>hi,it's a test</h2>',receivers=['han_zhichao@sina.cn'])
+email.send(subject='Test', html='<h2>hi,it is a test</h2>',receivers=['han_zhichao@sina.cn'])
 ```
 
 ## Use Template file
